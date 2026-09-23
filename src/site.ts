@@ -18,7 +18,8 @@ export const analytics: AnalyticsConfig | undefined = undefined;
 /** The privacy notice's facts; they must describe the deployed collector. */
 export const privacy: Omit<NoticeOptions, "site" | "collector"> = {
   controller: { name: "Doug Borg", email: site.email },
-  hosting: "on a server I run at home in Colorado, USA",
+  hosting: "on a server I run at home in Colorado",
+  country: "the United States",
   network: { name: "Cloudflare", privacyUrl: "https://www.cloudflare.com/privacypolicy/" },
   retentionDays: 90,
   updated: "2026-09-22",
