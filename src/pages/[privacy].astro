@@ -1,0 +1,22 @@
+---
+import { privacyNotice } from "@dougborg/site-analytics";
+import Base from "../layouts/Base.astro";
+import { analytics, privacy } from "../site.ts";
+
+// No tracking means no notice: the page exists only while analytics is configured.
+export function getStaticPaths() {
+  return analytics ? [{ params: { privacy: "privacy" } }] : [];
+}
+
+const notice = analytics
+  ? privacyNotice({ ...privacy, site: analytics.hostname, collector: analytics.collector })
+  : "";
+---
+<Base path="/privacy/" title="Privacy notice" description="What this site measures and how to turn it off." optOut>
+  <article>
+    <header class="article-header">
+      <h1>Privacy notice</h1>
+    </header>
+    <div class="prose" set:html={notice} />
+  </article>
+</Base>

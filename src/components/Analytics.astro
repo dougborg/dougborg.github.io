@@ -1,0 +1,14 @@
+---
+import { type AnalyticsConfig, configElement } from "@dougborg/site-analytics";
+
+interface Props {
+  /** Omit to load only the opt-out control, as on the privacy page. */
+  config?: AnalyticsConfig;
+}
+
+const { config } = Astro.props;
+---
+{config && <Fragment set:html={configElement(config)} />}
+<script>
+  import "@dougborg/site-analytics/analytics.js";
+</script>
