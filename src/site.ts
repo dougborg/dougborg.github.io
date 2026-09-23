@@ -1,4 +1,5 @@
 import { getCollection } from "astro:content";
+import { firstSentence } from "./summary.ts";
 
 export const site = {
   title: "Doug Borg",
@@ -33,12 +34,7 @@ const words = (post: Post) => (post.body ?? "").split(/\s+/).filter(Boolean).len
 export const readingMinutes = (post: Post) => Math.max(1, Math.round(words(post) / 230));
 
 /** The authored description, or the post's opening sentence. */
-export function summary(post: Post) {
-  if (post.data.description) return post.data.description;
-  const paragraph = (post.body ?? "").trim().split(/\n\s*\n/)[0].replace(/\s+/g, " ");
-  const plain = paragraph.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1").replace(/[*_`]/g, "");
-  return plain.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? plain;
-}
+export const summary = (post: Post) => post.data.description ?? firstSentence(post.body ?? "");
 
 export const projects = [
   {

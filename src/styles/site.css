@@ -178,6 +178,7 @@
 .read-progress {
   display: none;
 }
+/* Scroll-linked rather than autoplaying, but still motion: skip it when asked. */
 @supports (animation-timeline: scroll()) {
   .read-progress {
     display: block;
@@ -219,6 +220,11 @@
   text-align: end;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .read-progress {
+    display: none;
+  }
+}
 @media (max-width: 700px) {
   .site-name {
     font-size: 1.5rem;

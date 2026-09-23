@@ -5,6 +5,7 @@ import { formatDate, isoDate, postAccent, posts, projects, readingMinutes, site,
 const entries = await Promise.all(
   (await posts()).map(async (post) => ({ post, accent: await postAccent(post) })),
 );
+// posts() is newest first, so years and the posts within them come out newest first too.
 const years = Map.groupBy(entries, ({ post }) => post.data.date.getUTCFullYear());
 ---
 <Base path="/" home>
