@@ -24,12 +24,12 @@ const years = Map.groupBy(entries, ({ post }) => post.data.date.getUTCFullYear()
     {[...years].map(([year, group]) => (
       <section class="post-year" aria-label={`${year}`}>
         <p class="post-year-label" aria-hidden="true">{year}</p>
-        <ol class="post-timeline">
+        <ol class="timeline-list">
           {group.map(({ post, accent }) => (
             <li data-accent={accent}>
               <article>
                 <h3 class="entry-title"><a href={`/posts/${post.id}/`}>{post.data.title}</a></h3>
-                <p class="meta"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time><span>{readingMinutes(post)} min read</span></p>
+                <p class="meta meta-row"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time><span>{readingMinutes(post)} min read</span></p>
                 <p>{summary(post)}</p>
               </article>
             </li>
@@ -41,9 +41,9 @@ const years = Map.groupBy(entries, ({ post }) => post.data.date.getUTCFullYear()
 
   <section class="content-section" aria-labelledby="projects">
     <h2 class="section-title" id="projects"><span class="nerd-icon section-icon" aria-hidden="true">&#xf121;</span>Projects</h2>
-    <ul class="project-grid">
+    <ul class="card-grid projects">
       {projects.map((project) => (
-        <li class="surface project" data-accent={project.accent}>
+        <li class="card" data-accent={project.accent}>
           <h3 class="entry-title"><a href={project.href}>{project.name}</a></h3>
           <p>{project.text}</p>
         </li>

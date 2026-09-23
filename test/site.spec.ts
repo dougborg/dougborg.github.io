@@ -65,10 +65,10 @@ test("home keeps the status probe sentence and lists posts newest first", async 
 
 test("home shows each post's summary and reading time, and the projects", async ({ page }) => {
   await page.goto("/");
-  const post = page.locator(".post-timeline li").first();
+  const post = page.locator(".timeline-list li").first();
   await expect(post).toContainText("1 min read");
   await expect(post).toContainText("This site used to be a Svbtle blog");
-  await expect(page.locator(".project-grid a")).toHaveText(["harness-kit", "gdub", "solarized-ui"]);
+  await expect(page.locator(".card-grid a")).toHaveText(["harness-kit", "gdub", "solarized-ui"]);
 });
 
 test("a post too short to scroll leaves the reading bar empty", async ({ page }) => {

@@ -39,5 +39,5 @@ Pushes to `main` then deploy `dist/` to GitHub Pages; the repository's Pages sou
 ## Constraints
 
 - The home page must keep the sentence "I build software and look after the machines it runs on.": the dougborg.net status probe checks for it.
-- Styling comes from the design system; add missing components upstream in solarized-ui rather than as local CSS.
+- Styling comes from the design system: reusable patterns such as the accent band, timeline, cards, pager, and reading bar live in solarized-ui, so add missing ones there. `src/styles/site.css` holds only this site's own layout.
 - The build publishes the fonts' licenses and the design system's third-party notices beside the bundled fonts in `_astro/`.

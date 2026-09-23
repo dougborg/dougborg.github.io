@@ -20,14 +20,14 @@ const accent = await postAccent(post);
   <article class="post">
     <header class="article-header">
       <h1>{post.data.title}</h1>
-      <p class="meta"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time><span>{readingMinutes(post)} min read</span></p>
+      <p class="meta meta-row"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time><span>{readingMinutes(post)} min read</span></p>
     </header>
     <div class="prose">
       <Content />
     </div>
   </article>
   {(newer || older) && (
-    <nav class="post-pager" aria-label="More posts">
+    <nav class="pager" aria-label="More posts">
       {older && <a rel="prev" href={`/posts/${older.id}/`}><span class="meta">Older</span>{older.data.title}</a>}
       {newer && <a rel="next" href={`/posts/${newer.id}/`}><span class="meta">Newer</span>{newer.data.title}</a>}
     </nav>
