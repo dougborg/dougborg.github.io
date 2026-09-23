@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import { formatDate, isoDate, posts, site } from "../site.ts";
+
+const entries = await posts();
+---
+<Base path="/" home>
+  <div class="prose">
+    <p class="lead">I build software and look after the machines it runs on. This is where I write about it.</p>
+    <p>Code is on <a href="https://github.com/dougborg">GitHub</a>. Mail goes to <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+  </div>
+  <section class="content-section" data-accent="blue" aria-labelledby="posts">
+    <h2 class="section-title" id="posts">Posts</h2>
+    <ul class="post-list">
+      {entries.map((post) => (
+        <li>
+          <article>
+            <div class="entry-heading">
+              <h3 class="entry-title"><a href={`/posts/${post.id}/`}>{post.data.title}</a></h3>
+              <p class="meta"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time></p>
+            </div>
+            {post.data.description && <p>{post.data.description}</p>}
+          </article>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>

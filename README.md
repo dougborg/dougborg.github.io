@@ -1,15 +1,43 @@
 # dougborg.org
 
-Jekyll site built by GitHub Pages and served at <https://dougborg.org>.
+Astro site deployed to GitHub Pages at <https://dougborg.org>.
+It uses the [`@dougborg/solarized-ui`](https://github.com/dougborg/solarized-ui) design system, pinned to an exact version so updates arrive as reviewable Dependabot pull requests.
 
-To publish a post, add `_posts/YYYY-MM-DD-slug.md` with front matter and push
-to `main`. The post appears at `/slug`, and the Atom feed is at `/feed.xml`.
+## Write a post
 
-To preview locally, use Ruby 3.1: GitHub Pages pins Jekyll 3.9, which calls
-`String#untaint` and does not run on Ruby 3.2 or later.
+Add `src/content/posts/<slug>.md` with front matter, then open a pull request:
 
-```bash
-docker run --rm -it -p 4000:4000 -v "$PWD":/srv/jekyll -w /srv/jekyll \
-  -v dougborg-site-gems:/usr/local/bundle ruby:3.1 \
-  sh -c 'bundle install && bundle exec jekyll serve --host 0.0.0.0'
+```markdown
+---
+title: Post title
+date: 2026-09-22
+description: Optional one-line summary for the post list and feed.
+---
 ```
+
+The post appears at `/posts/<slug>/`, in the RSS feed at `/feed.xml`, and in `/sitemap-index.xml`.
+Code blocks are highlighted with Prism, which the design system styles by weight and italics rather than color so they stay readable in both themes.
+
+## Develop
+
+Use the pinned Node (`.nvmrc`, also pinned for Volta) and pnpm (`packageManager`).
+
+```sh
+pnpm install --frozen-lockfile
+pnpm dev            # http://localhost:4321
+pnpm check          # astro check (types and templates)
+pnpm build          # dist/
+pnpm exec playwright install chromium
+pnpm test           # Playwright and axe against the built site, both themes, 320 and 1440px
+```
+
+## Deploy
+
+`.github/workflows/site.yml` checks, builds, and tests every pull request and push.
+Pushes to `main` then deploy `dist/` to GitHub Pages; the repository's Pages source is GitHub Actions.
+
+## Constraints
+
+- The home page must keep the sentence "I build software and look after the machines it runs on.": the dougborg.net status probe checks for it.
+- Styling comes from the design system; add missing components upstream in solarized-ui rather than as local CSS.
+- The build publishes the fonts' licenses and the design system's third-party notices beside the bundled fonts in `_astro/`.

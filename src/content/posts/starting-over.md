@@ -1,5 +1,6 @@
 ---
 title: Starting over
+date: 2026-09-18
 ---
 
 This site used to be a Svbtle blog with four posts from 2014, none of which I
