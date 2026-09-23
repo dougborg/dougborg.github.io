@@ -22,16 +22,16 @@ const years = Map.groupBy(entries, ({ post }) => post.data.date.getUTCFullYear()
   <section class="content-section" aria-labelledby="posts">
     <h2 class="section-title" id="posts"><span class="nerd-icon section-icon" aria-hidden="true">&gt;_</span>Posts</h2>
     {[...years].map(([year, group]) => (
-      <section class="post-year" aria-label={`${year}`}>
-        <p class="post-year-label" aria-hidden="true">{year}</p>
-        <ol class="timeline-list">
+      <section class="post-year" aria-labelledby={`year-${year}`}>
+        <h3 class="section-label" id={`year-${year}`}>{year}</h3>
+        <ol class="panel panel-rows post-rows">
           {group.map(({ post, accent }) => (
             <li data-accent={accent}>
-              <article>
-                <h3 class="entry-title"><a href={`/posts/${post.id}/`}>{post.data.title}</a></h3>
-                <p class="meta meta-row"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time><span>{readingMinutes(post)} min read</span></p>
-                <p>{summary(post)}</p>
-              </article>
+              <div>
+                <a class="panel-title" href={`/posts/${post.id}/`}>{post.data.title}</a>
+                <span class="panel-description">{summary(post)}</span>
+              </div>
+              <p class="meta numeric"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time><br>{readingMinutes(post)} min read</p>
             </li>
           ))}
         </ol>

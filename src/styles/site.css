@@ -1,4 +1,4 @@
-/* Site-specific layout on top of solarized-ui; shared patterns (band, timeline, cards, pager,
+/* Site-specific layout on top of solarized-ui; shared patterns (band, marked rows, cards, pager,
    reading bar) come from the design system. */
 
 .intro .lead {
@@ -31,21 +31,14 @@
 .post-year + .post-year {
   margin-top: var(--space-8);
 }
-.post-year-label {
-  margin: 0 0 var(--space-2);
-  font-family: var(--mono);
-  font-size: var(--text-small);
-  font-weight: 600;
-  color: var(--ink-3);
-}
-.timeline-list .entry-title a {
+/* Post rows are solarized-ui marked rows; each title's underline takes the post's accent. */
+.post-rows .panel-title {
   text-decoration-color: var(--section-accent);
   text-decoration-thickness: 2px;
   text-underline-offset: 4px;
 }
-.timeline-list p:not(.meta) {
-  max-width: var(--measure);
-  margin: var(--space-2) 0 0;
+.post-rows .meta {
+  margin: 0;
 }
 
 .projects .entry-title {

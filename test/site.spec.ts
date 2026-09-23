@@ -65,10 +65,24 @@ test("home keeps the status probe sentence and lists posts newest first", async 
 
 test("home shows each post's summary and reading time, and the projects", async ({ page }) => {
   await page.goto("/");
-  const post = page.locator(".timeline-list li").first();
+  const post = page.locator(".post-rows li").first();
   await expect(post).toContainText("1 min read");
   await expect(post).toContainText("This site used to be a Svbtle blog");
   await expect(page.locator(".card-grid a")).toHaveText(["harness-kit", "gdub", "solarized-ui"]);
+});
+
+test("each post row carries its accent as a tint and an edge", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/");
+  const row = page.locator(".post-rows > li").first();
+  const accent = await row.getAttribute("data-accent");
+  expect(accent).toBeTruthy();
+  const panel = await page
+    .locator(".post-rows")
+    .first()
+    .evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(await row.evaluate((el) => getComputedStyle(el).backgroundColor)).not.toBe(panel);
+  expect(await row.evaluate((el) => getComputedStyle(el).boxShadow)).toContain("inset");
 });
 
 test("a post too short to scroll leaves the reading bar empty", async ({ page }) => {
