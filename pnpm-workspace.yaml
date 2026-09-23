@@ -1,0 +1,4 @@
+minimumReleaseAge: 0
+allowBuilds:
+  # The platform binary arrives as an optional dependency; its postinstall only re-checks it.
+  esbuild: false
