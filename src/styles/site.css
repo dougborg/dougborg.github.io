@@ -1,0 +1,80 @@
+/* Site-specific layout on top of solarized-ui; shared patterns (band, marked rows, cards, pager,
+   reading bar) come from the design system. */
+
+.intro .lead {
+  margin: 0 0 var(--space-3);
+  font-size: 1.3125rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--accent-ink);
+}
+.intro p:not(.lead) {
+  max-width: var(--measure);
+  margin: 0;
+}
+.intro-links {
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.intro-links .nerd-icon {
+  color: var(--accent);
+}
+.intro-links .action:hover .nerd-icon {
+  color: currentColor;
+}
+
+.content-section .section-title {
+  border: 0;
+}
+
+.post-year + .post-year {
+  margin-top: var(--space-8);
+}
+/* Post rows are solarized-ui marked rows; each title's underline takes the post's accent. */
+.post-rows .panel-title a {
+  text-decoration-color: var(--section-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.post-rows .meta {
+  margin: 0;
+}
+.post-rows .meta span {
+  display: block;
+}
+
+.projects .entry-title {
+  font-family: var(--mono);
+  font-size: 1rem;
+}
+.projects p {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-small);
+}
+
+/* A post's header takes the post's accent. */
+.post .article-header {
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--section-accent);
+}
+.post .article-header h1 {
+  font-size: 2.25rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+@media (max-width: 700px) {
+  .post .article-header h1 {
+    font-size: 1.75rem;
+  }
+}
+@media print {
+  .intro-links {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .post .article-header {
+    border-color: CanvasText;
+  }
+}
