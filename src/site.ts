@@ -1,3 +1,4 @@
+import type { AnalyticsConfig, NoticeOptions } from "@dougborg/site-analytics";
 import { getCollection } from "astro:content";
 import { firstSentence } from "./summary.ts";
 
@@ -5,6 +6,23 @@ export const site = {
   title: "Doug Borg",
   description: "I build software and look after the machines it runs on.",
   email: "dougborg@dougborg.org",
+};
+
+/**
+ * Visitor analytics through @dougborg/site-analytics. It stays undefined, which publishes no
+ * tracker, privacy page, or footer link, until this site has its own Umami website ID
+ * (dougborg/dougborg-dot-net#391).
+ */
+export const analytics: AnalyticsConfig | undefined = undefined;
+
+/** The privacy notice's facts; they must describe the deployed collector. */
+export const privacy: Omit<NoticeOptions, "site" | "collector"> = {
+  controller: { name: "Doug Borg", email: site.email },
+  hosting: "on a server I run at home in Colorado",
+  country: "the United States",
+  network: { name: "Cloudflare", privacyUrl: "https://www.cloudflare.com/privacypolicy/" },
+  retentionDays: 90,
+  updated: "2026-09-22",
 };
 
 /** Newest first. */

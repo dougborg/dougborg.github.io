@@ -1,0 +1,16 @@
+---
+import { type AnalyticsConfig, configElement } from "@dougborg/site-analytics";
+
+interface Props {
+  /** Omit to load only the opt-out control, as on the privacy page. */
+  config?: AnalyticsConfig;
+}
+
+const { config } = Astro.props;
+// Callers render this only when tracking is configured or a page needs the opt-out control;
+// Astro then bundles the module into just those pages.
+---
+{config && <Fragment set:html={configElement(config)} />}
+<script>
+  import "@dougborg/site-analytics/analytics.js";
+</script>

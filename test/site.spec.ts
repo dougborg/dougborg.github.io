@@ -94,6 +94,14 @@ test("a post too short to scroll leaves the reading bar empty", async ({ page })
   expect(width).toBe(0);
 });
 
+test("analytics stays off until the site has a website ID", async ({ page, request }) => {
+  await page.goto("/");
+  await expect(page.locator("#site-analytics")).toHaveCount(0);
+  await expect(page.locator('a[rel="privacy-policy"]')).toHaveCount(0);
+  expect(await page.content()).not.toContain("umami");
+  expect((await request.get("/privacy/")).status()).toBe(404);
+});
+
 test("theme control cycles and the page works without scripts", async ({ page, browser }) => {
   await page.goto("/");
   const toggle = page.getByRole("button", { name: /Theme:/ });

@@ -31,6 +31,15 @@ pnpm exec playwright install chromium
 pnpm test           # Playwright and axe against the built site, both themes, 320 and 1440px
 ```
 
+## Analytics
+
+Visits are counted with [`@dougborg/site-analytics`](https://github.com/dougborg/site-analytics), which loads the self-hosted Umami tracker from `stats.dougborg.net` only when the visitor sends no Global Privacy Control or Do Not Track signal and has not opted out.
+It records page views, referrers, campaign tags, Web Vitals, scroll depth, engaged time, and outbound, download, and contact clicks; the package README has the exact contract.
+
+It is off until this site has its own Umami website ID ([dougborg/dougborg-dot-net#391](https://github.com/dougborg/dougborg-dot-net/issues/391)).
+To turn it on, set `analytics` in `src/site.ts`; the same build then publishes the tracker on every page, a footer link, and `/privacy/`, whose notice comes from the package and whose facts are `privacy` in `src/site.ts`.
+Update `privacy.updated` whenever those facts or the package's collection change.
+
 ## Deploy
 
 `.github/workflows/site.yml` checks, builds, and tests every pull request and push.

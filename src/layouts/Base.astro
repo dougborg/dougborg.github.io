@@ -2,7 +2,8 @@
 import "@dougborg/solarized-ui/solarized-ui.css";
 import themeControl from "@dougborg/solarized-ui/theme-control.html?raw";
 import "../styles/site.css";
-import { site } from "../site.ts";
+import Analytics from "../components/Analytics.astro";
+import { analytics, site } from "../site.ts";
 
 interface Props {
   /** Site-relative path, for the canonical URL. */
@@ -12,11 +13,13 @@ interface Props {
   published?: Date;
   /** The home page uses the site title as its heading. */
   home?: boolean;
+  /** Load the analytics module without tracking, for the privacy page's opt-out control. */
+  optOut?: boolean;
   /** A Solarized accent name that colors the page's rails and markers. */
   accent?: string;
 }
 
-const { path, title, description = site.description, published, home = false, accent } = Astro.props;
+const { path, title, description = site.description, published, home = false, optOut = false, accent } = Astro.props;
 const pageTitle = title ? `${title} | ${site.title}` : site.title;
 const canonical = new URL(path, Astro.site).href;
 // The package's control loads its script from assets/; this site bundles the module instead.
@@ -60,11 +63,13 @@ const Title = home ? "h1" : "p";
   </main>
   <footer class="page-footer">
     <p>Subscribe <a href="/feed.xml">via RSS</a>, or write to <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+    {analytics && <p><a href="/privacy/" rel="privacy-policy">Privacy notice</a></p>}
   </footer>
 </div>
 <Fragment set:html={themeButton} />
 <script>
   import "@dougborg/solarized-ui/theme.js";
 </script>
+{(analytics || optOut) && <Analytics config={optOut ? undefined : analytics} />}
 </body>
 </html>
