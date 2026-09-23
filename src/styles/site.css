@@ -32,13 +32,16 @@
   margin-top: var(--space-8);
 }
 /* Post rows are solarized-ui marked rows; each title's underline takes the post's accent. */
-.post-rows .panel-title {
+.post-rows .panel-title a {
   text-decoration-color: var(--section-accent);
   text-decoration-thickness: 2px;
   text-underline-offset: 4px;
 }
 .post-rows .meta {
   margin: 0;
+}
+.post-rows .meta span {
+  display: block;
 }
 
 .projects .entry-title {
