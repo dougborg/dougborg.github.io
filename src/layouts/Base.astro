@@ -1,6 +1,7 @@
 ---
 import "@dougborg/solarized-ui/solarized-ui.css";
 import themeControl from "@dougborg/solarized-ui/theme-control.html?raw";
+import "../styles/site.css";
 import { site } from "../site.ts";
 
 interface Props {
@@ -11,9 +12,11 @@ interface Props {
   published?: Date;
   /** The home page uses the site title as its heading. */
   home?: boolean;
+  /** A Solarized accent name that colors the page's rails and markers. */
+  accent?: string;
 }
 
-const { path, title, description = site.description, published, home = false } = Astro.props;
+const { path, title, description = site.description, published, home = false, accent } = Astro.props;
 const pageTitle = title ? `${title} | ${site.title}` : site.title;
 const canonical = new URL(path, Astro.site).href;
 // The package's control loads its script from assets/; this site bundles the module instead.
@@ -39,11 +42,11 @@ const Title = home ? "h1" : "p";
 <meta property="og:type" content={published ? "article" : "website"}>
 {published && <meta property="article:published_time" content={published.toISOString()}>}
 </head>
-<body>
+<body data-accent={accent}>
 <a class="skip-link" href="#main">Skip to main content</a>
 <div class="page-column">
-  <header class="masthead">
-    <Title class="masthead-title"><a href="/">{site.title}</a></Title>
+  <header class="masthead site-masthead">
+    <Title class="masthead-title site-name"><a href="/">{site.title}</a></Title>
     <nav class="site-nav" aria-label="Site">
       <ul>
         <li><a href="/" aria-current={home ? "page" : undefined}>Posts</a></li>

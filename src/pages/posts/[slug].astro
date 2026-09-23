@@ -1,23 +1,35 @@
 ---
 import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
-import { formatDate, isoDate, posts } from "../../site.ts";
+import { formatDate, isoDate, postAccent, posts, readingMinutes } from "../../site.ts";
 
 export async function getStaticPaths() {
-  return (await posts()).map((post) => ({ params: { slug: post.id }, props: { post } }));
+  const all = await posts();
+  return all.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, newer: all[i - 1], older: all[i + 1] },
+  }));
 }
 
-const { post } = Astro.props;
+const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
+const accent = await postAccent(post);
 ---
-<Base path={`/posts/${post.id}/`} title={post.data.title} description={post.data.description} published={post.data.date}>
-  <article>
+<Base path={`/posts/${post.id}/`} title={post.data.title} description={post.data.description} published={post.data.date} accent={accent}>
+  <div class="read-progress" aria-hidden="true"></div>
+  <article class="post">
     <header class="article-header">
       <h1>{post.data.title}</h1>
-      <p class="meta"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time></p>
+      <p class="meta"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time><span>{readingMinutes(post)} min read</span></p>
     </header>
     <div class="prose">
       <Content />
     </div>
   </article>
+  {(newer || older) && (
+    <nav class="post-pager" aria-label="More posts">
+      {older && <a rel="prev" href={`/posts/${older.id}/`}><span class="meta">Older</span>{older.data.title}</a>}
+      {newer && <a rel="next" href={`/posts/${newer.id}/`}><span class="meta">Newer</span>{newer.data.title}</a>}
+    </nav>
+  )}
 </Base>

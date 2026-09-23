@@ -1,0 +1,251 @@
+/* Site identity on top of solarized-ui: the résumé's accent band, a post timeline, and a reading rail. */
+:root {
+  --band: linear-gradient(
+    to right,
+    var(--tone-blue) 0 16.6667%,
+    var(--tone-cyan) 0 33.3333%,
+    var(--tone-green) 0 50%,
+    var(--tone-yellow) 0 66.6667%,
+    var(--tone-orange) 0 83.3333%,
+    var(--tone-magenta) 0
+  );
+  --identity: var(--solarized-blue);
+}
+
+/* Masthead: the name set like the résumé's, with the accent band in place of a grey rule. */
+.site-masthead {
+  position: relative;
+  border-bottom: 0;
+  padding-bottom: var(--space-3);
+}
+.site-masthead::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 4px;
+  background: var(--band);
+}
+.site-name {
+  font-family: var(--sans);
+  font-size: var(--text-title);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.site-name a {
+  color: var(--identity);
+}
+
+/* Home intro */
+.intro .lead {
+  margin: 0 0 var(--space-3);
+  font-size: 1.3125rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--accent-ink);
+}
+.intro p:not(.lead) {
+  max-width: var(--measure);
+  margin: 0;
+}
+.intro-links {
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.intro-links .nerd-icon {
+  color: var(--accent);
+}
+.intro-links .action:hover .nerd-icon {
+  color: currentColor;
+}
+
+.content-section .section-title {
+  border: 0;
+}
+
+/* Posts as a timeline: a year, then a rail with one marker per post in that post's accent. */
+.post-year + .post-year {
+  margin-top: var(--space-8);
+}
+.post-year-label {
+  margin: 0 0 var(--space-2);
+  font-family: var(--mono);
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.post-timeline {
+  --axis: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.post-timeline > li {
+  position: relative;
+  padding: 0 0 var(--space-6) var(--space-8);
+}
+.post-timeline > li:last-child {
+  padding-bottom: 0;
+}
+/* The rail segment below each marker belongs to its post. */
+.post-timeline > li::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--axis) - 1px);
+  top: 0.5rem;
+  bottom: 0;
+  width: 2px;
+  background: var(--section-accent);
+}
+.post-timeline > li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  width: calc(var(--axis) * 2);
+  height: calc(var(--axis) * 2);
+  border-radius: 50%;
+  background: var(--section-accent);
+}
+.post-timeline .entry-title {
+  line-height: 1.3;
+}
+.post-timeline .entry-title a {
+  text-decoration-color: var(--section-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.post-timeline p {
+  max-width: var(--measure);
+  margin: var(--space-2) 0 0;
+}
+.post-timeline .meta,
+.post .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-4);
+  margin-top: var(--space-1);
+}
+
+/* Projects: tinted surfaces, like the résumé's open-source cards. */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.project {
+  --card-padding: var(--space-4) var(--space-4) var(--space-4) var(--space-6);
+  position: relative;
+}
+.project::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  border-radius: var(--radius) 0 0 var(--radius);
+  background: var(--section-accent);
+}
+.project .entry-title {
+  font-family: var(--mono);
+  font-size: 1rem;
+}
+.project p {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-small);
+}
+@supports (color: oklch(from red l c h)) and (color: light-dark(white, black)) {
+  .project {
+    --card-background: light-dark(
+      oklch(from var(--section-accent) 94% 0.025 h),
+      oklch(from var(--section-accent) 28% 0.025 h)
+    );
+  }
+}
+
+/* Post pages: the header takes the post's accent, and the band doubles as a reading rail. */
+.post .article-header {
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--section-accent);
+}
+.post .article-header h1 {
+  font-size: 2.25rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.read-progress {
+  display: none;
+}
+@supports (animation-timeline: scroll()) {
+  .read-progress {
+    display: block;
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 5;
+    height: 3px;
+    background: var(--band);
+    transform-origin: left;
+    /* A page too short to scroll has an inactive timeline and keeps this empty resting state. */
+    transform: scaleX(0);
+    animation: read-progress linear both;
+    animation-timeline: scroll(root);
+  }
+  @keyframes read-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+
+.post-pager {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-4);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--rule);
+}
+.post-pager a {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--ink);
+  font-weight: 600;
+}
+.post-pager a[rel="next"] {
+  text-align: end;
+}
+
+@media (max-width: 700px) {
+  .site-name {
+    font-size: 1.5rem;
+  }
+  .post .article-header h1 {
+    font-size: 1.75rem;
+  }
+}
+@media print {
+  .site-masthead::after,
+  .post-timeline > li::before,
+  .post-timeline > li::after,
+  .project::before,
+  .read-progress,
+  .intro-links,
+  .post-pager {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .site-masthead::after,
+  .post-timeline > li::before,
+  .post-timeline > li::after,
+  .project::before {
+    background: CanvasText;
+  }
+  .post .article-header {
+    border-color: CanvasText;
+  }
+}

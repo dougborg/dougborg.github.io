@@ -1,26 +1,50 @@
 ---
 import Base from "../layouts/Base.astro";
-import { formatDate, isoDate, posts, site } from "../site.ts";
+import { formatDate, isoDate, postAccent, posts, projects, readingMinutes, site, summary } from "../site.ts";
 
-const entries = await posts();
+const entries = await Promise.all(
+  (await posts()).map(async (post) => ({ post, accent: await postAccent(post) })),
+);
+const years = Map.groupBy(entries, ({ post }) => post.data.date.getUTCFullYear());
 ---
 <Base path="/" home>
-  <div class="prose">
+  <section class="intro" aria-label="About">
     <p class="lead">I build software and look after the machines it runs on. This is where I write about it.</p>
-    <p>Code is on <a href="https://github.com/dougborg">GitHub</a>. Mail goes to <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
-  </div>
-  <section class="content-section" data-accent="blue" aria-labelledby="posts">
-    <h2 class="section-title" id="posts">Posts</h2>
-    <ul class="post-list">
-      {entries.map((post) => (
-        <li>
-          <article>
-            <div class="entry-heading">
-              <h3 class="entry-title"><a href={`/posts/${post.id}/`}>{post.data.title}</a></h3>
-              <p class="meta"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time></p>
-            </div>
-            {post.data.description && <p>{post.data.description}</p>}
-          </article>
+    <p>Lately that is mostly home infrastructure: a Raspberry Pi running the house and a network defined in Pulumi.</p>
+    <ul class="cluster intro-links">
+      <li><a class="action" href="https://resume.dougborg.org/"><span class="nerd-icon" aria-hidden="true">&#xf0f6;</span>Résumé</a></li>
+      <li><a class="action" href="https://github.com/dougborg"><span class="nerd-icon" aria-hidden="true">&#xf09b;</span>GitHub</a></li>
+      <li><a class="action" href={`mailto:${site.email}`}><span class="nerd-icon" aria-hidden="true">&#xf0e0;</span>Email</a></li>
+    </ul>
+  </section>
+
+  <section class="content-section" aria-labelledby="posts">
+    <h2 class="section-title" id="posts"><span class="nerd-icon section-icon" aria-hidden="true">&gt;_</span>Posts</h2>
+    {[...years].map(([year, group]) => (
+      <section class="post-year" aria-label={`${year}`}>
+        <p class="post-year-label" aria-hidden="true">{year}</p>
+        <ol class="post-timeline">
+          {group.map(({ post, accent }) => (
+            <li data-accent={accent}>
+              <article>
+                <h3 class="entry-title"><a href={`/posts/${post.id}/`}>{post.data.title}</a></h3>
+                <p class="meta"><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time><span>{readingMinutes(post)} min read</span></p>
+                <p>{summary(post)}</p>
+              </article>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+  </section>
+
+  <section class="content-section" aria-labelledby="projects">
+    <h2 class="section-title" id="projects"><span class="nerd-icon section-icon" aria-hidden="true">&#xf121;</span>Projects</h2>
+    <ul class="project-grid">
+      {projects.map((project) => (
+        <li class="surface project" data-accent={project.accent}>
+          <h3 class="entry-title"><a href={project.href}>{project.name}</a></h3>
+          <p>{project.text}</p>
         </li>
       ))}
     </ul>

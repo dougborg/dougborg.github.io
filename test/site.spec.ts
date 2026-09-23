@@ -63,6 +63,23 @@ test("home keeps the status probe sentence and lists posts newest first", async 
   );
 });
 
+test("home shows each post's summary and reading time, and the projects", async ({ page }) => {
+  await page.goto("/");
+  const post = page.locator(".post-timeline li").first();
+  await expect(post).toContainText("1 min read");
+  await expect(post).toContainText("This site used to be a Svbtle blog");
+  await expect(page.locator(".project-grid a")).toHaveText(["harness-kit", "gdub", "solarized-ui"]);
+});
+
+test("a post too short to scroll leaves the reading bar empty", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/posts/starting-over/");
+  const width = await page
+    .locator(".read-progress")
+    .evaluate((bar) => bar.getBoundingClientRect().width);
+  expect(width).toBe(0);
+});
+
 test("theme control cycles and the page works without scripts", async ({ page, browser }) => {
   await page.goto("/");
   const toggle = page.getByRole("button", { name: /Theme:/ });
