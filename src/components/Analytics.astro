@@ -7,6 +7,8 @@ interface Props {
 }
 
 const { config } = Astro.props;
+// Callers render this only when tracking is configured or a page needs the opt-out control;
+// Astro then bundles the module into just those pages.
 ---
 {config && <Fragment set:html={configElement(config)} />}
 <script>
