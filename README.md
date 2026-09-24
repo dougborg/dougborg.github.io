@@ -44,6 +44,18 @@ To turn it off, set `analytics` to `undefined` and merge: the next deploy publis
 Visitors who opted out keep their `umami.disabled` flag; nothing else is stored in the browser.
 To stop counting before that deploy lands, the collector can refuse this website ID on its own ([dougborg/dougborg-dot-net](https://github.com/dougborg/dougborg-dot-net)).
 
+## Content Security Policy
+
+GitHub Pages cannot send response headers, so the policy ships as a `<meta http-equiv="content-security-policy">` that Astro's `security.csp` writes into every page, ahead of any stylesheet or script.
+`astro.config.mjs` declares it: everything from this site (`default-src 'self'`), `object-src 'none'`, `base-uri` and `form-action` limited to this site, and no `'unsafe-inline'` or `'unsafe-eval'`.
+Astro hashes each script it inlines, such as the theme control, into `script-src`, so moving or editing one needs no manual hash.
+Pages that load the tracker also allow the collector in `script-src` and `connect-src`; `Base.astro` adds it from `analytics` in `src/site.ts`, so the privacy page and an analytics-off build do not name it.
+`test/csp.spec.ts` fails on any violation on the home page, a post, and `/privacy/`, and `test/csp-production.spec.ts` does the same with the tracker loaded on the production host.
+
+A meta policy cannot carry `frame-ancestors`, `report-uri`/`report-to`, or `sandbox`, and Pages offers no header to add them.
+So nothing stops another site framing these pages; the analytics module refuses to count a framed page, and there are no forms or authenticated actions to clickjack.
+Violations are not reported anywhere; they appear only in the visitor's console.
+
 ## Deploy
 
 `.github/workflows/site.yml` checks, builds, and tests every pull request and push.

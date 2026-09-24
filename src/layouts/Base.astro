@@ -25,6 +25,14 @@ const canonical = new URL(path, Astro.site).href;
 // The package's control loads its script from assets/; this site bundles the module instead.
 const themeButton = themeControl.replace(/<script\b[^>]*><\/script>\s*/, "");
 const Title = home ? "h1" : "p";
+// The tracker loads from the collector and reports to it, so pages that track allow it in their
+// CSP. This must run here, before <head> renders: a component in <body> inserts too late. `csp` is
+// undefined only in `astro dev`, which applies no policy; test/csp.spec.ts checks the build.
+const tracking = optOut ? undefined : analytics;
+if (tracking) {
+  Astro.csp?.insertScriptResource(tracking.collector);
+  Astro.csp?.insertDirective(`connect-src ${tracking.collector}`);
+}
 ---
 <!doctype html>
 <html lang="en">
@@ -70,6 +78,6 @@ const Title = home ? "h1" : "p";
 <script>
   import "@dougborg/solarized-ui/theme.js";
 </script>
-{(analytics || optOut) && <Analytics config={optOut ? undefined : analytics} />}
+{(analytics || optOut) && <Analytics config={tracking} />}
 </body>
 </html>
