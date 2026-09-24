@@ -14,12 +14,12 @@
     "build": "astro build",
     "preview": "astro preview --host 127.0.0.1",
     "check": "astro check",
-    "test": "node --test test/unit/*.test.ts && playwright test"
+    "test": "node --test test/unit/*.test.ts test/build/*.test.ts && playwright test"
   },
   "dependencies": {
     "@astrojs/rss": "4.0.19",
     "@astrojs/sitemap": "3.7.4",
-    "@dougborg/site-analytics": "0.2.0",
+    "@dougborg/site-analytics": "0.3.0",
     "@dougborg/solarized-ui": "0.5.1",
     "astro": "7.3.4"
   },
