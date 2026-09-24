@@ -103,6 +103,7 @@ const analyticsConfig = {
   websiteId: "86b4f907-4165-4c7b-9250-fe7402c5262f",
   collector: "https://stats.dougborg.net",
   hostname: "dougborg.org",
+  declaredEvents: [],
 };
 
 for (const [name, path] of pages) {
@@ -127,7 +128,7 @@ test("the privacy page is the package's notice and its opt-out works, uncounted"
   await expect(page.locator("#site-analytics")).toHaveCount(0);
   const notice = privacyNotice({
     site: "dougborg.org",
-    collector: "https://stats.dougborg.net",
+    analytics: analyticsConfig,
     controller: { name: "Doug Borg", email: "dougborg@dougborg.org" },
     hosting: "on a server I run at home in Colorado",
     country: "the United States",
