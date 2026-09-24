@@ -1,10 +1,14 @@
 import { AxeBuilder } from "@axe-core/playwright";
-import { expect, type Page, test } from "@playwright/test";
+import { privacyNotice } from "@dougborg/site-analytics";
+import { chromium, expect, type Page, test } from "@playwright/test";
 
 const pages = [
   ["home", "/"],
   ["post", "/posts/starting-over/"],
 ] as const;
+
+/** The privacy page is not tracked, but must meet the same bar. */
+const checkedPages = [...pages, ["privacy", "/privacy/"]] as const;
 
 /** Every request must stay on this site: no hotlinked fonts, styles, or scripts. */
 function watchRequests(page: Page) {
@@ -18,7 +22,7 @@ function watchRequests(page: Page) {
   return problems;
 }
 
-for (const [name, path] of pages) {
+for (const [name, path] of checkedPages) {
   for (const colorScheme of ["light", "dark"] as const) {
     for (const width of [320, 1440]) {
       test(`${name} ${colorScheme} ${width}px is accessible and self-contained`, async ({
@@ -94,12 +98,88 @@ test("a post too short to scroll leaves the reading bar empty", async ({ page })
   expect(width).toBe(0);
 });
 
-test("analytics stays off until the site has a website ID", async ({ page, request }) => {
-  await page.goto("/");
+/** Restated here rather than imported, so a change to the published config must change a test. */
+const analyticsConfig = {
+  websiteId: "86b4f907-4165-4c7b-9250-fe7402c5262f",
+  collector: "https://stats.dougborg.net",
+  hostname: "dougborg.org",
+};
+
+for (const [name, path] of pages) {
+  test(`${name} carries the config element, the module, and the privacy link`, async ({ page }) => {
+    await page.goto(path);
+    const config = page.locator('script#site-analytics[type="application/json"]');
+    await expect(config).toHaveCount(1);
+    expect(JSON.parse((await config.textContent()) ?? "")).toEqual(analyticsConfig);
+    await expect(page.locator('script[type="module"][src*="Analytics"]')).toHaveCount(1);
+    await expect(page.locator('footer a[rel="privacy-policy"]')).toHaveAttribute("href", "/privacy/");
+    // 127.0.0.1 is not the production host, so the module refuses to load the tracker here.
+    await expect(config).toHaveAttribute("data-state", "blocked");
+  });
+}
+
+test("the privacy page is the package's notice and its opt-out works, uncounted", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/privacy/");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Privacy notice");
   await expect(page.locator("#site-analytics")).toHaveCount(0);
-  await expect(page.locator('a[rel="privacy-policy"]')).toHaveCount(0);
-  expect(await page.content()).not.toContain("umami");
-  expect((await request.get("/privacy/")).status()).toBe(404);
+  const notice = privacyNotice({
+    site: "dougborg.org",
+    collector: "https://stats.dougborg.net",
+    controller: { name: "Doug Borg", email: "dougborg@dougborg.org" },
+    hosting: "on a server I run at home in Colorado",
+    country: "the United States",
+    network: { name: "Cloudflare", privacyUrl: "https://www.cloudflare.com/privacypolicy/" },
+    retentionDays: 90,
+    updated: "2026-09-24",
+  });
+  // The build publishes the package's notice verbatim.
+  expect(await (await request.get("/privacy/")).text()).toContain(notice);
+
+  const button = page.getByRole("button", { name: "Stop counting my visits" });
+  await button.click();
+  expect(await page.evaluate(() => localStorage.getItem("umami.disabled"))).toBe("1");
+  await expect(page.getByRole("button", { name: "Resume counting my visits" })).toBeVisible();
+});
+
+/**
+ * Serve the built site as https://dougborg.org in a browser that does not report automation, so
+ * the module does try to load the tracker, and fail every request to the collector.
+ */
+test("pages render and work when the collector is down", async () => {
+  const browser = await chromium.launch({
+    args: ["--disable-blink-features=AutomationControlled"],
+  });
+  const context = await browser.newContext();
+  const collector: string[] = [];
+  await context.route("https://dougborg.org/**", async (route) => {
+    const url = new URL(route.request().url());
+    return route.fulfill({
+      response: await route.fetch({ url: `http://127.0.0.1:4327${url.pathname}${url.search}` }),
+    });
+  });
+  await context.route("https://stats.dougborg.net/**", (route) => {
+    collector.push(route.request().url());
+    return route.abort("connectionrefused");
+  });
+  const page = await context.newPage();
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  const response = await page.goto("https://dougborg.org/");
+  expect(response?.status()).toBe(200);
+  await expect(page.locator("#site-analytics")).toHaveAttribute("data-state", "failed");
+  await page.getByRole("link", { name: "Starting over" }).click();
+  await expect(page).toHaveURL("https://dougborg.org/posts/starting-over/");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Starting over");
+  await expect(page.locator("#site-analytics")).toHaveAttribute("data-state", "failed");
+  expect(collector).toEqual([
+    "https://stats.dougborg.net/script.js",
+    "https://stats.dougborg.net/script.js",
+  ]);
+  expect(errors).toEqual([]);
+  await browser.close();
 });
 
 test("theme control cycles and the page works without scripts", async ({ page, browser }) => {

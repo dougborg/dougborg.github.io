@@ -9,11 +9,15 @@ export const site = {
 };
 
 /**
- * Visitor analytics through @dougborg/site-analytics. It stays undefined, which publishes no
- * tracker, privacy page, or footer link, until this site has its own Umami website ID
- * (dougborg/dougborg-dot-net#391).
+ * Visitor analytics through @dougborg/site-analytics, with this site's own Umami website ID
+ * (dougborg/dougborg-dot-net#391). The ID is public: it ships in every page. Setting this to
+ * undefined is the rollback: the build then publishes no tracker, privacy page, or footer link.
  */
-export const analytics: AnalyticsConfig | undefined = undefined;
+export const analytics: AnalyticsConfig | undefined = {
+  websiteId: "86b4f907-4165-4c7b-9250-fe7402c5262f",
+  collector: "https://stats.dougborg.net",
+  hostname: "dougborg.org",
+};
 
 /** The privacy notice's facts; they must describe the deployed collector. */
 export const privacy: Omit<NoticeOptions, "site" | "collector"> = {
@@ -22,7 +26,7 @@ export const privacy: Omit<NoticeOptions, "site" | "collector"> = {
   country: "the United States",
   network: { name: "Cloudflare", privacyUrl: "https://www.cloudflare.com/privacypolicy/" },
   retentionDays: 90,
-  updated: "2026-09-22",
+  updated: "2026-09-24",
 };
 
 /** Newest first. */
