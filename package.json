@@ -19,7 +19,7 @@
   "dependencies": {
     "@astrojs/rss": "4.0.19",
     "@astrojs/sitemap": "3.7.4",
-    "@dougborg/site-analytics": "0.3.0",
+    "@dougborg/site-analytics": "0.4.0",
     "@dougborg/solarized-ui": "0.5.1",
     "astro": "7.3.4"
   },

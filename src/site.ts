@@ -17,10 +17,13 @@ export const analytics: AnalyticsConfig | undefined = {
   websiteId: "86b4f907-4165-4c7b-9250-fe7402c5262f",
   collector: "https://stats.dougborg.net",
   hostname: "dougborg.org",
+  // The theme switch carries no data-analytics-event markup, so this site sends no declared event
+  // and its notice lists none (dougborg/site-analytics#16); test/build/disclosure.test.ts holds both.
+  declaredEvents: [],
 };
 
 /** The privacy notice's facts; they must describe the deployed collector. */
-export const privacy: Omit<NoticeOptions, "site" | "collector"> = {
+export const privacy: Omit<NoticeOptions, "site" | "analytics"> = {
   controller: { name: "Doug Borg", email: site.email },
   hosting: "on a server I run at home in Colorado",
   country: "the United States",

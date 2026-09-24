@@ -9,7 +9,7 @@ export function getStaticPaths() {
 }
 
 const notice = analytics
-  ? privacyNotice({ ...privacy, site: analytics.hostname, collector: analytics.collector })
+  ? privacyNotice({ ...privacy, site: analytics.hostname, analytics })
   : "";
 ---
 <Base path="/privacy/" title="Privacy notice" description="What this site measures and how to turn it off." optOut>
