@@ -125,7 +125,7 @@ export function htmlReferences(html: string): Reference[] {
     add("img-src", attrs.get("poster"));
     for (const ref of cssReferences(attrs.get("style") ?? "")) add(ref.directive, ref.url);
   }
-  for (const [, css] of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi))
+  for (const [, css] of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style\b[^>]*>/gi))
     for (const ref of cssReferences(css)) add(ref.directive, ref.url);
   return found;
 }
@@ -215,21 +215,32 @@ interface Tag {
   attrs: Map<string, string>;
 }
 
-/** Start tags with their attributes, ignoring comments and the text inside scripts and styles. */
+/**
+ * Start tags with their attributes, in one pass over the markup: a comment is skipped whole, and a
+ * script or style yields its start tag but not its text, which may contain anything tag-like.
+ */
 function tags(html: string): Tag[] {
-  const markup = html
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .replace(/(<script\b[^>]*>)[\s\S]*?<\/script>/gi, "$1</script>")
-    .replace(/(<style\b[^>]*>)[\s\S]*?<\/style>/gi, "$1</style>");
-  return [...markup.matchAll(/<([a-zA-Z][\w-]*)\b((?:[^>"']|"[^"]*"|'[^']*')*)>/g)].map(
-    ([, name, rest]) => ({
-      name: name.toLowerCase(),
-      attrs: new Map(
-        [...rest.matchAll(/([^\s"'=<>/]+)(?:\s*=\s*("[^"]*"|'[^']*'|[^\s"'>]+))?/g)].map(
-          ([, key, value = ""]) => [key.toLowerCase(), decode(value.replace(/^["']|["']$/g, ""))],
-        ),
-      ),
-    }),
+  const attributes = String.raw`((?:[^>"']|"[^"]*"|'[^']*')*)`;
+  const token = new RegExp(
+    String.raw`<!--[\s\S]*?(?:-->|$)` +
+      String.raw`|<(script|style)\b${attributes}>[\s\S]*?(?:<\/\1\b[^>]*>|$)` +
+      String.raw`|<([a-zA-Z][\w-]*)\b${attributes}>`,
+    "gi",
+  );
+  const found: Tag[] = [];
+  for (const [, textTag, textAttrs, tag, tagAttrs] of html.matchAll(token)) {
+    const name = textTag ?? tag;
+    if (!name) continue; // a comment
+    found.push({ name: name.toLowerCase(), attrs: attrs(textAttrs ?? tagAttrs ?? "") });
+  }
+  return found;
+}
+
+function attrs(rest: string): Map<string, string> {
+  return new Map(
+    [...rest.matchAll(/([^\s"'=<>/]+)(?:\s*=\s*("[^"]*"|'[^']*'|[^\s"'>]+))?/g)].map(
+      ([, key, value = ""]) => [key.toLowerCase(), decode(value.replace(/^["']|["']$/g, ""))],
+    ),
   );
 }
 
