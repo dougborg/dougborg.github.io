@@ -148,38 +148,41 @@ test("the privacy page is the package's notice and its opt-out works, uncounted"
  * Serve the built site as https://dougborg.org in a browser that does not report automation, so
  * the module does try to load the tracker, and fail every request to the collector.
  */
-test("pages render and work when the collector is down", async () => {
+test("pages render and work when the collector is down", async ({ baseURL }) => {
   const browser = await chromium.launch({
     args: ["--disable-blink-features=AutomationControlled"],
   });
-  const context = await browser.newContext();
-  const collector: string[] = [];
-  await context.route("https://dougborg.org/**", async (route) => {
-    const url = new URL(route.request().url());
-    return route.fulfill({
-      response: await route.fetch({ url: `http://127.0.0.1:4327${url.pathname}${url.search}` }),
+  try {
+    const context = await browser.newContext();
+    const collector: string[] = [];
+    await context.route("https://dougborg.org/**", async (route) => {
+      const url = new URL(route.request().url());
+      return route.fulfill({
+        response: await route.fetch({ url: new URL(url.pathname + url.search, baseURL).href }),
+      });
     });
-  });
-  await context.route("https://stats.dougborg.net/**", (route) => {
-    collector.push(route.request().url());
-    return route.abort("connectionrefused");
-  });
-  const page = await context.newPage();
-  const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  const response = await page.goto("https://dougborg.org/");
-  expect(response?.status()).toBe(200);
-  await expect(page.locator("#site-analytics")).toHaveAttribute("data-state", "failed");
-  await page.getByRole("link", { name: "Starting over" }).click();
-  await expect(page).toHaveURL("https://dougborg.org/posts/starting-over/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Starting over");
-  await expect(page.locator("#site-analytics")).toHaveAttribute("data-state", "failed");
-  expect(collector).toEqual([
-    "https://stats.dougborg.net/script.js",
-    "https://stats.dougborg.net/script.js",
-  ]);
-  expect(errors).toEqual([]);
-  await browser.close();
+    await context.route("https://stats.dougborg.net/**", (route) => {
+      collector.push(route.request().url());
+      return route.abort("connectionrefused");
+    });
+    const page = await context.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    const response = await page.goto("https://dougborg.org/");
+    expect(response?.status()).toBe(200);
+    await expect(page.locator("#site-analytics")).toHaveAttribute("data-state", "failed");
+    await page.getByRole("link", { name: "Starting over" }).click();
+    await expect(page).toHaveURL("https://dougborg.org/posts/starting-over/");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Starting over");
+    await expect(page.locator("#site-analytics")).toHaveAttribute("data-state", "failed");
+    expect(collector).toEqual([
+      "https://stats.dougborg.net/script.js",
+      "https://stats.dougborg.net/script.js",
+    ]);
+    expect(errors).toEqual([]);
+  } finally {
+    await browser.close();
+  }
 });
 
 test("theme control cycles and the page works without scripts", async ({ page, browser }) => {
