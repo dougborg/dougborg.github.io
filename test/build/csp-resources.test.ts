@@ -60,12 +60,18 @@ test("source expressions match hosts, wildcards, ports, schemes, and paths", () 
   assert.ok(!ok("*", "data:image/png;base64,AA"));
 });
 
-test("srcset candidates are split with or without spaces, and style text is not markup", () => {
+test("srcset candidates split with or without spaces; comments, script and style text are not markup", () => {
   const refs = htmlReferences(
-    `<img srcset="https://a.example/1.jpg 1x,https://b.example/2.jpg 2x"><style>p::before { content: "<img src=x>"; }</style>`,
+    [
+      `<img srcset="https://a.example/1.jpg 1x,https://b.example/2.jpg 2x">`,
+      `<!-- <img src="https://c.example/commented-out.jpg"> -->`,
+      `<style>p::before { content: "<img src=x>"; }</style >`,
+      `<script>document.write('<img src="https://d.example/in-script.jpg">')</script >`,
+      `<img src="https://e.example/after.jpg">`,
+    ].join(""),
   );
   assert.deepEqual(
     refs.map((ref) => ref.url),
-    ["https://a.example/1.jpg", "https://b.example/2.jpg"],
+    ["https://a.example/1.jpg", "https://b.example/2.jpg", "https://e.example/after.jpg"],
   );
 });
