@@ -55,6 +55,9 @@ Pages that load the tracker also allow the collector in `script-src` and `connec
 A meta policy cannot carry `frame-ancestors`, `report-uri`/`report-to`, or `sandbox`, and Pages offers no header to add them.
 So nothing stops another site framing these pages; the analytics module refuses to count a framed page, and there are no forms or authenticated actions to clickjack.
 Violations are not reported anywhere; they appear only in the visitor's console.
+Because of that, `test/build/csp-resources.test.ts` reads each built page's own policy and fails, naming the file and URL, on anything the page references that the policy would block: `src`, `srcset`, `poster`, `<object data>`, fetching `<link>`s, and CSS `url()`s inline or in a same-origin stylesheet the page links.
+An image, video, frame, or script from another host has to be copied into `public/` or allowed in `astro.config.mjs` first; `test/build/fixtures/offsite/` shows what fails.
+It cannot see what scripts fetch at runtime, such as the tracker, which the Playwright tests cover.
 
 ## Deploy
 

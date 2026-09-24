@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fixture: a post that embeds off-site resources</title>
+<!-- The policy a tracked post carries: the collector is allowed for scripts and connections only. -->
+<meta http-equiv="content-security-policy" content="default-src 'self';connect-src 'self' https://stats.dougborg.net;font-src 'self';img-src 'self';object-src 'none';base-uri 'self';form-action 'self'; script-src 'self' https://stats.dougborg.net; style-src 'self';">
+<link rel="stylesheet" href="/_astro/fixture.css">
+<script type="module" src="https://stats.dougborg.net/script.js"></script>
+</head>
+<body>
+<main>
+<p>Allowed: this site's own image, and the collector's script above.</p>
+<img src="/images/local.png" alt="">
+<p>Blocked: another host's image and frame.</p>
+<img src="https://images.example.com/photo.jpg" alt="">
+<iframe src="https://www.youtube-nocookie.com/embed/abc123" title="Video"></iframe>
+<p>Blocked: the collector is allowed for scripts, not images.</p>
+<img src="https://stats.dougborg.net/pixel.gif" alt="">
+</main>
+</body>
+</html>
