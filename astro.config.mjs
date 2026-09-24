@@ -32,4 +32,22 @@ export default defineConfig({
   // Prism emits token classes that the design system highlights without color; Shiki inlines colors.
   markdown: { syntaxHighlight: "prism" },
   integrations: [sitemap(), fontLicenses()],
+  // Pages cannot send headers, so Astro writes this policy into each page as a <meta> element and
+  // hashes the scripts and styles it inlines. A meta policy cannot carry frame-ancestors,
+  // report-uri, or sandbox. Base.astro adds the collector on the pages that load the tracker.
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "connect-src 'self'",
+        "font-src 'self'",
+        "img-src 'self'",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+      ],
+      scriptDirective: { resources: ["'self'"] },
+      styleDirective: { resources: ["'self'"] },
+    },
+  },
 });
