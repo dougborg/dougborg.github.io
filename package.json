@@ -39,7 +39,7 @@
   "knip": {
     "entry": [
       "src/pages/**/*.{astro,ts}",
-      "test/**/*.ts"
+      "test/**/*.{test,spec}.ts"
     ],
     "project": [
       "src/**/*.{ts,astro}",

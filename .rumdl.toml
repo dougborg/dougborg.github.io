@@ -1,6 +1,6 @@
 [global]
 flavor = "gfm"
-include = ["*.md", ".github/**/*.md"]
+include = ["**/*.md"]
 exclude = ["node_modules", "dist", ".claude"]
 cache = false
 
