@@ -13,7 +13,11 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview --host 127.0.0.1",
-    "check": "astro check",
+    "check": "pnpm lint && pnpm typecheck && pnpm check:unused",
+    "lint": "biome check . && rumdl check .",
+    "format": "biome check --write . && rumdl fmt .",
+    "typecheck": "astro check",
+    "check:unused": "knip --no-progress",
     "test": "node --test test/unit/*.test.ts test/build/*.test.ts && playwright test"
   },
   "dependencies": {
@@ -26,7 +30,20 @@
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@axe-core/playwright": "4.13.0",
+    "@biomejs/biome": "2.5.14",
     "@playwright/test": "1.63.0",
+    "knip": "6.37.0",
+    "rumdl": "0.2.75",
     "typescript": "6.0.3"
+  },
+  "knip": {
+    "entry": [
+      "src/pages/**/*.{astro,ts}",
+      "test/**/*.ts"
+    ],
+    "project": [
+      "src/**/*.{ts,astro}",
+      "test/**/*.ts"
+    ]
   }
 }
