@@ -126,7 +126,10 @@ for (const [name, path] of pages) {
     await expect(config).toHaveCount(1);
     expect(JSON.parse((await config.textContent()) ?? "")).toEqual(analyticsConfig);
     await expect(page.locator('script[type="module"][src*="Analytics"]')).toHaveCount(1);
-    await expect(page.locator('footer a[rel="privacy-policy"]')).toHaveAttribute("href", "/privacy/");
+    await expect(page.locator('footer a[rel="privacy-policy"]')).toHaveAttribute(
+      "href",
+      "/privacy/",
+    );
     // 127.0.0.1 is not the production host, so the module refuses to load the tracker here.
     await expect(config).toHaveAttribute("data-state", "blocked");
   });
@@ -218,7 +221,9 @@ test("feed, sitemap, and font licenses are published", async ({ request }) => {
   const sitemap = await (await request.get("/sitemap-0.xml")).text();
   expect(sitemap).toContain("https://dougborg.org/posts/starting-over/");
   const html = await (await request.get("/")).text();
-  const css = await (await request.get(html.match(/href="(\/_astro\/[^"]+\.css)"/)?.[1] ?? "")).text();
+  const css = await (
+    await request.get(html.match(/href="(\/_astro\/[^"]+\.css)"/)?.[1] ?? "")
+  ).text();
   const fonts = [...css.matchAll(/url\((\/_astro\/[^)]+\.woff2)\)/g)].map((match) => match[1]);
   expect(fonts.length).toBeGreaterThan(0);
   for (const file of [

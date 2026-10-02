@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { blockedReferences, htmlReferences, matches, pagePolicy, pageReferences } from "./csp-resources.ts";
+import {
+  blockedReferences,
+  htmlReferences,
+  matches,
+  pagePolicy,
+  pageReferences,
+} from "./csp-resources.ts";
 
 const origin = "https://dougborg.org/";
 const dist = new URL("../../dist", import.meta.url).pathname;

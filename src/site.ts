@@ -1,5 +1,5 @@
-import type { AnalyticsConfig, NoticeOptions } from "@dougborg/site-analytics";
 import { getCollection } from "astro:content";
+import type { AnalyticsConfig, NoticeOptions } from "@dougborg/site-analytics";
 import { firstSentence } from "./summary.ts";
 
 export const site = {
@@ -34,12 +34,19 @@ export const privacy: Omit<NoticeOptions, "site" | "analytics"> = {
 
 /** Newest first. */
 export async function posts() {
-  return (await getCollection("posts")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  return (await getCollection("posts")).sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+  );
 }
 
 /** Dates are written without a time, so format them in UTC to keep the authored day. */
 export const formatDate = (date: Date) =>
-  date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+  date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 
 export const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 
