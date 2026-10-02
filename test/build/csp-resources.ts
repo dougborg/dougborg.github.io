@@ -45,13 +45,18 @@ export async function blockedReferences(dir: string, origin: string): Promise<st
     }
     const pageUrl = new URL(file.replace(/(^|\/)index\.html$/, "$1"), origin);
     for (const ref of await pageReferences(html, pageUrl, dir))
-      if (!allows(policy, ref, pageUrl)) blocked.push(`${file}: ${ref.directive} blocks ${ref.url}`);
+      if (!allows(policy, ref, pageUrl))
+        blocked.push(`${file}: ${ref.directive} blocks ${ref.url}`);
   }
   return blocked;
 }
 
 /** A page's own references plus those of the same-origin stylesheets it links. */
-export async function pageReferences(html: string, pageUrl: URL, dir: string): Promise<Reference[]> {
+export async function pageReferences(
+  html: string,
+  pageUrl: URL,
+  dir: string,
+): Promise<Reference[]> {
   const refs = htmlReferences(html);
   for (const { directive, url } of [...refs]) {
     const target = new URL(url, pageUrl);

@@ -47,4 +47,3 @@ export async function policy(page: Page) {
       .map(([name, ...sources]) => [name, sources]),
   );
 }
-
