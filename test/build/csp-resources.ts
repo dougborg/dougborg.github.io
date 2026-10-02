@@ -85,6 +85,41 @@ export function pagePolicy(html: string): Policy | undefined {
   );
 }
 
+/** The one src/data-bearing reference a tag's own attributes carry, keyed by tag name. */
+function elementReference(
+  name: string,
+  attrs: Map<string, string>,
+): Reference | Reference[] | undefined {
+  const src = attrs.get("src");
+  switch (name) {
+    case "img":
+      return { directive: "img-src", url: src ?? "" };
+    case "input":
+      return attrs.get("type")?.toLowerCase() === "image"
+        ? { directive: "img-src", url: src ?? "" }
+        : undefined;
+    case "iframe":
+    case "frame":
+      return { directive: "frame-src", url: src ?? "" };
+    case "script":
+      return { directive: "script-src-elem", url: src ?? "" };
+    case "video":
+    case "audio":
+    case "track":
+    // <source src> belongs to <video>/<audio>; <source srcset> to <picture>.
+    case "source":
+      return { directive: "media-src", url: src ?? "" };
+    case "embed":
+      return { directive: "object-src", url: src ?? "" };
+    case "object":
+      return { directive: "object-src", url: attrs.get("data") ?? "" };
+    case "link":
+      return linkReferences(attrs);
+    default:
+      return undefined;
+  }
+}
+
 /** Every resource the markup references: elements, inline styles, and <style> blocks. */
 export function htmlReferences(html: string): Reference[] {
   const found: Reference[] = [];
@@ -92,40 +127,7 @@ export function htmlReferences(html: string): Reference[] {
     if (url?.trim()) found.push({ directive, url: url.trim() });
   };
   for (const { name, attrs } of tags(html)) {
-    const src = attrs.get("src");
-    switch (name) {
-      case "img":
-        add("img-src", src);
-        break;
-      case "input":
-        if (attrs.get("type")?.toLowerCase() === "image") add("img-src", src);
-        break;
-      case "iframe":
-      case "frame":
-        add("frame-src", src);
-        break;
-      case "script":
-        add("script-src-elem", src);
-        break;
-      case "video":
-      case "audio":
-      case "track":
-        add("media-src", src);
-        break;
-      case "source":
-        // <source src> belongs to <video>/<audio>; <source srcset> to <picture>.
-        add("media-src", src);
-        break;
-      case "embed":
-        add("object-src", src);
-        break;
-      case "object":
-        add("object-src", attrs.get("data"));
-        break;
-      case "link":
-        for (const ref of linkReferences(attrs)) add(ref.directive, ref.url);
-        break;
-    }
+    for (const ref of [elementReference(name, attrs) ?? []].flat()) add(ref.directive, ref.url);
     for (const candidate of srcset(attrs.get("srcset"))) add("img-src", candidate);
     add("img-src", attrs.get("poster"));
     for (const ref of cssReferences(attrs.get("style") ?? "")) add(ref.directive, ref.url);
@@ -161,15 +163,8 @@ export function allows(policy: Policy, { directive, url }: Reference, pageUrl: U
   return (policy.get(governing) ?? []).some((source) => matches(source, target, pageUrl));
 }
 
-/** Does one CSP source expression match a URL? Covers what a static site uses, not every form. */
-export function matches(source: string, target: URL, pageUrl: URL): boolean {
-  const lower = source.toLowerCase();
-  if (lower === "'self'") return target.origin === pageUrl.origin;
-  if (lower.startsWith("'")) return false; // 'none', hashes, nonces, keywords: never a URL.
-  if (lower === "*") return /^(https?|wss?):$/.test(target.protocol);
-  if (/^[a-z][a-z0-9+.-]*:$/.test(lower)) return target.protocol === lower;
-  const parts = lower.match(/^(?:([a-z][a-z0-9+.-]*):\/\/)?(\*\.)?([^/:]+)(?::(\d+|\*))?(\/.*)?$/);
-  if (!parts) return false;
+/** Whether a `scheme://*.host:port/path` source expression's parsed parts match a URL. */
+function matchesHost(parts: RegExpMatchArray, target: URL, pageUrl: URL): boolean {
   const [, scheme, wildcard, host, port, path] = parts;
   const expected = scheme ?? pageUrl.protocol.slice(0, -1);
   const upgraded = expected === "http" && target.protocol === "https:";
@@ -178,6 +173,17 @@ export function matches(source: string, target: URL, pageUrl: URL): boolean {
   if (port !== "*" && target.port !== (port ?? "")) return false;
   if (!path) return true;
   return path.endsWith("/") ? target.pathname.startsWith(path) : target.pathname === path;
+}
+
+/** Does one CSP source expression match a URL? Covers what a static site uses, not every form. */
+export function matches(source: string, target: URL, pageUrl: URL): boolean {
+  const lower = source.toLowerCase();
+  if (lower === "'self'") return target.origin === pageUrl.origin;
+  if (lower.startsWith("'")) return false; // 'none', hashes, nonces, keywords: never a URL.
+  if (lower === "*") return /^(https?|wss?):$/.test(target.protocol);
+  if (/^[a-z][a-z0-9+.-]*:$/.test(lower)) return target.protocol === lower;
+  const parts = lower.match(/^(?:([a-z][a-z0-9+.-]*):\/\/)?(\*\.)?([^/:]+)(?::(\d+|\*))?(\/.*)?$/);
+  return parts ? matchesHost(parts, target, pageUrl) : false;
 }
 
 /** <link> relations that fetch something, and the directive for each. */
@@ -225,7 +231,7 @@ interface Tag {
  * script or style yields its start tag but not its text, which may contain anything tag-like.
  */
 function tags(html: string): Tag[] {
-  const attributes = String.raw`((?:[^>"']|"[^"]*"|'[^']*')*)`;
+  const attributes = `((?:[^>"']|"[^"]*"|'[^']*')*)`;
   const token = new RegExp(
     String.raw`<!--[\s\S]*?(?:-->|$)` +
       String.raw`|<(script|style)\b${attributes}>[\s\S]*?(?:<\/\1\b[^>]*>|$)` +
