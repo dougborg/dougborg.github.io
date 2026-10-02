@@ -51,7 +51,7 @@ export const formatDate = (date: Date) =>
 export const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 
 /** The résumé's accent sequence, so both sites cycle through Solarized in the same order. */
-export const accentOrder = ["blue", "cyan", "green", "yellow", "orange", "magenta"] as const;
+const accentOrder = ["blue", "cyan", "green", "yellow", "orange", "magenta"] as const;
 
 type Post = Awaited<ReturnType<typeof posts>>[number];
 
