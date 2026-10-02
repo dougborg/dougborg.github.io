@@ -56,6 +56,19 @@ for (const [name, path] of checkedPages) {
   }
 }
 
+test("the site navigation links to the résumé, consulting site, and GitHub", async ({ page }) => {
+  await page.goto("/");
+  const nav = page.getByRole("navigation", { name: "Site" });
+  for (const [name, href] of [
+    ["Posts", "/"],
+    ["Résumé", "https://resume.dougborg.org/"],
+    ["Consulting", "https://dougborg.com/"],
+    ["GitHub", "https://github.com/dougborg"],
+  ]) {
+    await expect(nav.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
+  }
+});
+
 test("home keeps the status probe sentence and lists posts newest first", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("body")).toContainText(
