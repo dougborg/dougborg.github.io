@@ -85,7 +85,17 @@ test("home shows each post's summary and reading time, and the projects", async 
   const post = page.locator(".post-rows li").first();
   await expect(post).toContainText("1 min read");
   await expect(post).toContainText("This site used to be a Svbtle blog");
-  await expect(page.locator(".card-grid a")).toHaveText(["harness-kit", "gdub", "solarized-ui"]);
+  await expect(page.locator(".card-grid a")).toHaveText([
+    "Ends and Means",
+    "AirHound",
+    "gas-tools",
+    "katana-openapi-client",
+    "katana-sheets-toolkit",
+    "harness-kit",
+    "gdub",
+    "solarized-ui",
+    "site-analytics",
+  ]);
 });
 
 test("each post row carries its accent as a tint and an edge", async ({ page }) => {
