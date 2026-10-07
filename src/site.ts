@@ -70,6 +70,36 @@ export const summary = (post: Post) => post.data.description ?? firstSentence(po
 
 export const projects = [
   {
+    name: "Ends and Means",
+    href: "https://endsandmeans.info/",
+    accent: "magenta",
+    text: "Political, economic, and social ideas in theory and practice, explored through explanations, historical cases, comparisons, and evidence.",
+  },
+  {
+    name: "AirHound",
+    href: "https://github.com/dougborg/AirHound",
+    accent: "red",
+    text: "An open WiFi and Bluetooth surveillance detection toolkit, with a portable Rust library, shared device signatures, and ESP32 firmware.",
+  },
+  {
+    name: "gas-tools",
+    href: "https://github.com/dougborg/gas-tools",
+    accent: "blue",
+    text: "Google Apps Script tooling: typed sheet-as-database helpers, runtime utilities, test mocks, and a local dev server.",
+  },
+  {
+    name: "katana-openapi-client",
+    href: "https://github.com/dougborg/katana-openapi-client",
+    accent: "orange",
+    text: "Python and TypeScript clients for Katana MRP, with automatic retries, rate limiting, and pagination.",
+  },
+  {
+    name: "katana-sheets-toolkit",
+    href: "https://github.com/dougborg/katana-sheets-toolkit",
+    accent: "green",
+    text: "Katana MRP API access and Google Sheets integration for Google Apps Script, built on gas-tools.",
+  },
+  {
     name: "harness-kit",
     href: "https://github.com/dougborg/harness-kit",
     accent: "violet",
@@ -86,5 +116,11 @@ export const projects = [
     href: "https://dougborg.org/solarized-ui/",
     accent: "yellow",
     text: "The design system behind this site and my résumé: exact Solarized, light and dark.",
+  },
+  {
+    name: "site-analytics",
+    href: "https://github.com/dougborg/site-analytics",
+    accent: "blue",
+    text: "Privacy-respecting Umami analytics for static sites, with guarded tracker loading, interaction events, and a matching privacy notice.",
   },
 ] as const;

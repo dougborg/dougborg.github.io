@@ -6,7 +6,8 @@ import { join } from "node:path";
 import test from "node:test";
 
 const root = new URL("../../", import.meta.url).pathname;
-const markers = ["site-analytics", "stats.dougborg.net", "privacy-policy", "/privacy/"];
+// The homepage also links to the site-analytics project; only its config element enables tracking.
+const markers = ['id="site-analytics"', "stats.dougborg.net", "privacy-policy", "/privacy/"];
 
 /** Every file under a directory, relative to it. */
 async function files(dir: string): Promise<string[]> {
