@@ -41,7 +41,10 @@ It is on, with this site's own Umami website, named `dougborg.org`, whose ID is 
 Update `privacy.updated` whenever those facts or the package's collection change, and review any package release that widens collection before upgrading it.
 
 To turn it off, set `analytics` to `undefined` and merge: the next deploy publishes no tracker, footer link, or privacy page, which `test/build/analytics-off.test.ts` checks on every run.
-Visitors who opted out keep their `umami.disabled` flag; nothing else is stored in the browser.
+Visitors who opted out keep their `umami.disabled` flag.
+The theme control also stores explicit Dark, Light, or Auto selections in `localStorage` under `solarized-ui-theme`, per origin, without sending them to a server.
+Dark is the default, including without JavaScript; Auto follows live system changes when selected.
+Blocked storage does not prevent switching themes for the current page.
 To stop counting before that deploy lands, the collector can refuse this website ID on its own ([dougborg/dougborg-dot-net](https://github.com/dougborg/dougborg-dot-net)).
 
 ## Content Security Policy
