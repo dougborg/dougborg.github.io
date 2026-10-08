@@ -99,6 +99,18 @@ test("home shows each post's summary and reading time, and the projects", async 
   ]);
 });
 
+test("wide pages match the résumé's outer limit and keep article prose readable", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/");
+  expect((await page.locator(".page-column").boundingBox())?.width).toBe(1600);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  expect((await page.locator(".page-column").boundingBox())?.width).toBe(1440);
+  await page.goto("/posts/starting-over/");
+  expect((await page.locator(".prose").boundingBox())?.width).toBeLessThan(800);
+});
+
 test("each post row carries its accent as a tint and an edge", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/");

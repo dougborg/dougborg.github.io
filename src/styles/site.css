@@ -1,6 +1,14 @@
 /* Site-specific layout on top of solarized-ui; shared patterns (band, marked rows, cards, pager,
    reading bar) come from the design system. */
 
+/* Compatibility until the pinned solarized-ui release includes page-column--wide and --page-width.
+   Keep the shared class on the layout so the next package upgrade can replace this fallback. */
+@media screen {
+  .page-column--wide {
+    max-width: var(--page-width, 1600px);
+  }
+}
+
 .intro .lead {
   margin: 0 0 var(--space-3);
   font-size: 1.3125rem;
@@ -44,6 +52,9 @@
   display: block;
 }
 
+.projects {
+  --card-min: 24rem;
+}
 .projects .entry-title {
   font-family: var(--mono);
   font-size: 1rem;
