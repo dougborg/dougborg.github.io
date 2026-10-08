@@ -11,13 +11,18 @@ const years = Map.groupBy(entries, ({ post }) => post.data.date.getUTCFullYear()
 <Base path="/" home>
   <section class="intro" aria-label="About">
     <p class="lead">I build software and look after the machines it runs on. This is where I write about it.</p>
-    <p>Lately that is mostly home infrastructure: a Raspberry Pi running the house and a network defined in Pulumi.</p>
     <ul class="cluster intro-links">
       <li><a class="action" href="https://resume.dougborg.org/"><span class="nerd-icon" aria-hidden="true">&#xf0f6;</span>Résumé</a></li>
       <li><a class="action" href="https://github.com/dougborg"><span class="nerd-icon" aria-hidden="true">&#xf09b;</span>GitHub</a></li>
       <li><a class="action" href={`mailto:${site.email}`}><span class="nerd-icon" aria-hidden="true">&#xf0e0;</span>Email</a></li>
     </ul>
   </section>
+
+  <aside class="current-work content-section" aria-labelledby="currently">
+    <h2 class="section-title" id="currently"><span class="nerd-icon section-icon" aria-hidden="true">&#xf0ad;</span>Currently</h2>
+    <h3 class="section-label">Home infrastructure</h3>
+    <p>Lately that is mostly home infrastructure: a Raspberry Pi running the house and a network defined in Pulumi.</p>
+  </aside>
 
   <section class="content-section" aria-labelledby="posts">
     <h2 class="section-title" id="posts"><span class="nerd-icon section-icon" aria-hidden="true">&gt;_</span>Posts</h2>

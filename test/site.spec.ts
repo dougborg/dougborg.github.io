@@ -111,6 +111,38 @@ test("wide pages match the résumé's outer limit and keep article prose readabl
   expect((await page.locator(".prose").boundingBox())?.width).toBeLessThan(800);
 });
 
+test("home places current work above projects and stacks all four sections on mobile", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const sections = page.locator(".home-layout > *");
+  const positions = () =>
+    sections.evaluateAll((elements) =>
+      elements.map((el) => {
+        const { x, y } = el.getBoundingClientRect();
+        return { x, y };
+      }),
+    );
+  const desktop = await positions();
+  expect(desktop).toHaveLength(4);
+  expect(desktop[0].x).toBe(desktop[2].x);
+  expect(desktop[1].x).toBe(desktop[3].x);
+  expect(desktop[1].x).toBeGreaterThan(desktop[0].x);
+  expect(desktop[2].y).toBe(desktop[3].y);
+  await expect(page.locator("#currently .nerd-icon")).toHaveText("\uf0ad");
+  await expect(page.getByRole("complementary", { name: "Currently" })).toContainText(
+    "Home infrastructure",
+  );
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobile = await positions();
+  for (let i = 1; i < mobile.length; i++) {
+    expect(mobile[i].x).toBe(mobile[0].x);
+    expect(mobile[i].y).toBeGreaterThan(mobile[i - 1].y);
+  }
+});
+
 test("each post row carries its accent as a tint and an edge", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/");
