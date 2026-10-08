@@ -176,8 +176,8 @@ importers:
         specifier: 0.4.0
         version: 0.4.0
       '@dougborg/solarized-ui':
-        specifier: 0.7.0
-        version: 0.7.0
+        specifier: 0.8.0
+        version: 0.8.0
       astro:
         specifier: 7.3.5
         version: 7.3.5(@types/node@24.13.6)(jiti@2.7.0)(yaml@2.9.1)
@@ -466,8 +466,8 @@ packages:
     resolution: {integrity: sha512-yk3WFkTSArH07PRtjeM7Po2tIe87dKiLODnad7aBdMmx9IgUa2OLU7ZcKyqIDaNxAymWpzWnokvESykqiXgCRA==}
     engines: {node: '>=22'}
 
-  '@dougborg/solarized-ui@0.7.0':
-    resolution: {integrity: sha512-rYhHW3v69HdVgRXe91ytiq9iwi65cmvbLXeqi3A6KqwdNDROutSo8PvXRJk6GWky6Y+8usp9eBBA78oLi3TqrQ==}
+  '@dougborg/solarized-ui@0.8.0':
+    resolution: {integrity: sha512-yqax2OzvK4ksvdduRMFdsevnYsTjdfKHos3qKm6dmqBseBNXZIPEkMqBSszf86cl4pKemwSdP/sjLcuJsB7kLg==}
     engines: {node: '>=26.8.2'}
 
   '@emmetio/abbreviation@2.3.3':
@@ -2619,7 +2619,7 @@ snapshots:
 
   '@dougborg/site-analytics@0.4.0': {}
 
-  '@dougborg/solarized-ui@0.7.0': {}
+  '@dougborg/solarized-ui@0.8.0': {}
 
   '@emmetio/abbreviation@2.3.3':
     dependencies:
