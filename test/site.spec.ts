@@ -30,6 +30,7 @@ for (const [name, path] of checkedPages) {
       }, info) => {
         await page.setViewportSize({ width, height: 900 });
         await page.emulateMedia({ colorScheme });
+        await page.addInitScript(() => localStorage.setItem("solarized-ui-theme", "auto"));
         const problems = watchRequests(page);
         await page.goto(path);
         await page.evaluate(() => document.fonts.ready);
@@ -213,11 +214,23 @@ test("pages render and work when the collector is down", async ({ baseURL }) => 
 });
 
 test("theme control cycles and the page works without scripts", async ({ page, browser }) => {
+  await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/");
   const toggle = page.getByRole("button", { name: /Theme:/ });
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(0, 43, 54)");
+  await toggle.click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "auto");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(253, 246, 227)");
   await toggle.click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-  const context = await browser.newContext({ javaScriptEnabled: false, colorScheme: "dark" });
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.goto("/posts/starting-over/");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.emulateMedia({ colorScheme: "dark" });
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(253, 246, 227)");
+  const context = await browser.newContext({ javaScriptEnabled: false, colorScheme: "light" });
   const noScript = await context.newPage();
   await noScript.goto("http://127.0.0.1:4327/posts/starting-over/");
   await expect(noScript.locator(".theme-toggle")).toBeHidden();

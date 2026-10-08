@@ -9,7 +9,7 @@ for (const [name, path, tracked] of pages) {
     await page.goto(path);
     await page.evaluate(() => document.fonts.ready);
     await page.getByRole("button", { name: /Theme:/ }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "auto");
 
     const csp = await policy(page);
     expect(csp.get("default-src")).toEqual(["'self'"]);
