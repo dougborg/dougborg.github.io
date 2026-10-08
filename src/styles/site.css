@@ -16,9 +16,9 @@
   line-height: 1.45;
   color: var(--accent-ink);
 }
-.intro p:not(.lead) {
+.current-work p {
   max-width: var(--measure);
-  margin: 0;
+  margin-bottom: 0;
 }
 .intro-links {
   margin: var(--space-6) 0 0;
@@ -53,7 +53,7 @@
 }
 
 .projects {
-  --card-min: 24rem;
+  --card-min: 18rem;
 }
 .projects .entry-title {
   font-family: var(--mono);
@@ -62,6 +62,29 @@
 .projects p {
   margin: var(--space-2) 0 0;
   font-size: var(--text-small);
+}
+
+/* Introduction and current work sit above writing and projects on wide screens. */
+@media screen and (min-width: 1100px) {
+  .home-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: var(--space-12);
+    align-items: start;
+  }
+  .page-column .home-layout > * {
+    margin-top: 0;
+  }
+  .home-layout .post-rows > li {
+    display: block;
+  }
+  .home-layout .post-rows .meta {
+    margin-top: var(--space-3);
+  }
+  .home-layout .post-rows .meta span {
+    display: inline;
+    margin-left: var(--space-3);
+  }
 }
 
 /* A post's header takes the post's accent. */
