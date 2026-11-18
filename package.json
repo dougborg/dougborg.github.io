@@ -22,18 +22,18 @@
   },
   "dependencies": {
     "@astrojs/rss": "4.0.19",
-    "@astrojs/sitemap": "3.7.4",
+    "@astrojs/sitemap": "3.7.5",
     "@dougborg/site-analytics": "0.4.0",
     "@dougborg/solarized-ui": "0.8.0",
-    "astro": "7.3.5"
+    "astro": "7.4.12"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.10",
-    "@axe-core/playwright": "4.13.0",
-    "@biomejs/biome": "2.5.15",
-    "@playwright/test": "1.63.0",
-    "knip": "6.39.0",
-    "rumdl": "0.2.78",
+    "@astrojs/check": "0.9.12",
+    "@axe-core/playwright": "4.14.0",
+    "@biomejs/biome": "2.6.7",
+    "@playwright/test": "1.65.1",
+    "knip": "6.45.1",
+    "rumdl": "0.3.4",
     "typescript": "6.0.3"
   },
   "knip": {
